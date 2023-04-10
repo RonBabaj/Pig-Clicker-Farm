@@ -1,33 +1,37 @@
 package com.example.hazirclicker2;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.FragmentContainerView;
 
 import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     public int c = 0;
@@ -45,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase db,db2;
     HelperDB hlp;
     Intent move;
+    FragmentContainerView frag;
+
+    private static final String CHANNEL_ID = "my_channel_01";
+    private static final CharSequence CHANNEL_NAME = "My Channel";
     TextView oink;
     String oinknum;
     ImageButton pig;
@@ -52,6 +60,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        frag = findViewById(R.id.fragment_container_view);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            if (bundle.getString("message in a bottle") != null) {
+               frag.setVisibility(View.VISIBLE);
+            }
+        }
         pig=findViewById(R.id.hazir);
         oink=findViewById(R.id.oink);
         hlp=new HelperDB(this);
@@ -90,7 +105,21 @@ public class MainActivity extends AppCompatActivity {
         String rowsCount = rowsCount(hlp.getWritableDatabase());
         this.counter = rowsCount;
         if (rowsCount.equals("0")) {
+
+            //initiates oinker count
             this.oink.setText("0 oinkers");
+
+            //initiates daily reward alarm
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY,10);
+            calendar.set(Calendar.MINUTE,00);
+            calendar.set(Calendar.SECOND,00);
+            Intent intent = new Intent(getApplicationContext(), DailyReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),100,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY,pendingIntent);
+            Log.d("alarm registered","alarm has been registered successfully");
+
         } else {
             Cursor cursor2 = this. db.rawQuery("SELECT oinkers FROM oinkcounter", (String[]) null);
             cursor2.moveToFirst();
