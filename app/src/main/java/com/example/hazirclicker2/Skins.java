@@ -81,8 +81,19 @@ public class Skins extends AppCompatActivity{
                 counter++;
                 cv.put("Name", names[i]);
                 cv.put("price",((i+1)*100)*i);
-                cv.put("isEquipped", "NO");
-                cv.put("isBought", "NO");
+                //for default first female and male pig skin selections
+                if(names[i].equals("Male Pig")){
+                    cv.put("isBought", "YES");
+                    cv.put("isEquipped", "YES");
+                }
+                else if(names[i].equals("Female Pig")){
+                    cv.put("isEquipped", "NO");
+                    cv.put("isBought", "YES");
+                }
+                else {
+                    cv.put("isEquipped", "NO");
+                    cv.put("isBought", "NO");
+                }
                 db.insert("Skins",null,cv);
             }
             db.close();
@@ -102,11 +113,16 @@ public class Skins extends AppCompatActivity{
         int givenpigint= view.getId();
         viewIDName = getResources().getResourceEntryName(givenpigint);
         if(isBought(db)){
-            popup_window cdd2 = new popup_window(Skins.this);
-            cdd2.setSkindex(viewIDName);
-            cdd2.show();
-            cdd2.price.setText("Item Owned, Would You like To Equip?");
-            db.close();
+            if(isEquipped(db)){
+               Toast.makeText(Skins.this,"Item Already Equipped!",Toast.LENGTH_LONG).show();
+            }
+            else {
+                popup_window cdd2 = new popup_window(Skins.this);
+                cdd2.setSkindex(viewIDName);
+                cdd2.show();
+                cdd2.price.setText("Item Owned, Would You like To Equip?");
+                db.close();
+            }
         }
         else {
             popup_window cdd = new popup_window(Skins.this);
@@ -146,6 +162,21 @@ public class Skins extends AppCompatActivity{
     public boolean isBought(SQLiteDatabase db){
         String counter = "";
         Cursor cursor = db.rawQuery("SELECT isBought FROM Skins WHERE Skindex = '"+viewIDName+"'",(String[]) null);
+        cursor.moveToFirst();
+        for(int i=0;i<cursor.getCount();i++){
+            counter = cursor.getString(0);
+        }
+        cursor.close();
+        if(counter.equals("YES")){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    public boolean isEquipped(SQLiteDatabase db){
+        String counter = "";
+        Cursor cursor = db.rawQuery("SELECT isEquipped FROM Skins WHERE Skindex = '"+viewIDName+"'",(String[]) null);
         cursor.moveToFirst();
         for(int i=0;i<cursor.getCount();i++){
             counter = cursor.getString(0);

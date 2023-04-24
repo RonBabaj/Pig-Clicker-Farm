@@ -66,11 +66,13 @@
         <receiver
             android:name="com.example.hazirclicker2.DailyReceiver"
             android:exported="true"
+            android:process=":remote"
             android:enabled="true"/>
 
         <receiver
             android:name="com.example.hazirclicker2.WakeUpAlarmReceiver"
             android:enabled="true"
+            android:process=":remote"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
