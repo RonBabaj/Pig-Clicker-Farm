@@ -1,6 +1,7 @@
 package com.example.hazirclicker2;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -16,6 +17,9 @@ public class HelperDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("CREATE TABLE oinkcounter (oinkers INT);");
         sqLiteDatabase.execSQL("CREATE TABLE Skins (skindex TEXT ,price TEXT, Name TEXT, isEquipped TEXT, isBought TEXT);");
+        sqLiteDatabase.execSQL("CREATE TABLE Upgrades (upgrade TEXT ,price INT, timesUpgraded INT);");
+        sqLiteDatabase.execSQL("CREATE TABLE PiggyBank (oinkers INT,ticker INT);");
+        sqLiteDatabase.execSQL("CREATE TABLE Handlers (handlerTimes INT);");
 
     }
 

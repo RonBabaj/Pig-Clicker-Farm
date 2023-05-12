@@ -22,7 +22,8 @@ public class popup_window extends Dialog implements View.OnClickListener{
     public int conformation=-1;
     public int leftoverCurrency;
     public String yesorno="";
-    public String cost = "";
+    private String upgradeType="";
+    private String cost = "";
     public TextView price;
     public String skindex="";
     HelperDB hlp;
@@ -62,6 +63,20 @@ public class popup_window extends Dialog implements View.OnClickListener{
                 break;
             }
         }
+        if(price.getText().equals("This Upgrade Costs " + cost + " Oinkers\nAre You Sure?")){
+            switch (view.getId()) {
+                case R.id.yes:
+                    yesorno="YES";
+                    OnConfirmedUpgrades(db);
+                    break;
+                case R.id.no:
+                    yesorno="NO";
+                    dismiss();
+                    break;
+                default:
+                    break;
+            }
+        }
         if(price.getText().equals("Item Owned, Would You like To Equip?")){
             switch (view.getId()) {
                 case R.id.yes:
@@ -76,6 +91,7 @@ public class popup_window extends Dialog implements View.OnClickListener{
         }
     }
 
+
     private void EquipSkin(SQLiteDatabase db) {
         db.execSQL("UPDATE Skins SET isEquipped = 'NO' WHERE  isEquipped = 'YES'");
         db.execSQL("UPDATE Skins SET isEquipped = 'YES' WHERE skindex = '"+skindex+"'");
@@ -87,14 +103,38 @@ public class popup_window extends Dialog implements View.OnClickListener{
     public void setCost(String  cost){
         this.cost = cost;
     }
+    public String getCost(){
+        return cost;
+    }
     public void setSkindex(String skindex){
         this.skindex=skindex;
     }
     public int getLeftoverCurrency(){
         return leftoverCurrency;
     }
-    public void setLeftoverCurrency(int leftoverCurrency){
-        this.leftoverCurrency=leftoverCurrency;
+    public void setUpgradeType(String upgradeType){this.upgradeType = upgradeType;}
+    public String getUpgradeType(){return upgradeType;}
+    public void setLeftoverCurrency(int leftoverCurrency){this.leftoverCurrency=leftoverCurrency;}
+
+    private void OnConfirmedUpgrades(SQLiteDatabase db) {
+        String Price = cost;
+        int pricenum =Integer.parseInt(cost);
+        String oink = oinkersCount(db);
+        int oinknum = Integer.parseInt(oink);
+        leftoverCurrency = oinknum - pricenum;
+        if(leftoverCurrency < 0){
+            Toast toast = Toast.makeText(getContext(),"Insufficient Funds! Upgrade not completed!",Toast.LENGTH_LONG);
+            toast.show();
+            dismiss();
+        }
+        else{
+            db.execSQL("UPDATE oinkcounter SET oinkers = " + leftoverCurrency);
+            db.execSQL("UPDATE Upgrades SET timesUpgraded = "+getTimesUpgradePlusOne(db)+" WHERE upgrade = '"+getUpgradeType()+"'");
+            db.execSQL("UPDATE Upgrades SET price = "+(Integer.parseInt(cost)*2)+" WHERE upgrade = '"+getUpgradeType()+"'");
+            Toast toast = Toast.makeText(getContext(),"Transaction Complete! Upgrade Successful!",Toast.LENGTH_LONG);
+            toast.show();
+            dismiss();
+        }
     }
     public void OnConfirmedSkins(SQLiteDatabase db){
         String Price = cost;
@@ -126,5 +166,17 @@ public class popup_window extends Dialog implements View.OnClickListener{
         }
         cursor.close();
         return counter2;
+    }
+    public int getTimesUpgradePlusOne(SQLiteDatabase db){
+        String counter2 = "";
+        Cursor cursor = db.rawQuery("SELECT timesUpgraded FROM Upgrades WHERE upgrade= '"+upgradeType+"'", (String[]) null);
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            counter2 += cursor.getString(0);
+        }
+        cursor.close();
+        int cursorint= Integer.parseInt(counter2);
+        int cursorint1= cursorint+1;
+        return cursorint1;
     }
 }

@@ -4,28 +4,264 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/grayground"
     tools:context=".Upgrades">
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    <ImageButton
+        <ImageView
+            android:layout_width="116dp"
+            android:layout_height="106dp"
+            android:src="@drawable/clock"
+            android:background="@android:color/transparent"/>
+    <LinearLayout
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/hazir"
-        android:src="@drawable/hazir"
-        android:layout_marginTop="205dp"
-        android:layout_marginLeft="50dp"
-        android:onClick="oink"
-        android:background="@android:color/transparent"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0 Oinkers"
-        android:textSize="70dp"
-        android:textAlignment="center"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="450dp"
-        android:id="@+id/oink"
-        />
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="11dp"
+            android:text="Click-Multiplier: Upgrades Oinkers given per click"
+            />
+        <LinearLayout
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/multitext"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="Multiplier: 0"
+                />
+            <Button
+                android:id="@+id/multibutton"
+                android:layout_marginLeft="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upgrade"
+                android:onClick="Upgrade"
+                android:backgroundTint="@android:color/holo_green_dark"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+    </LinearLayout>
+        <View
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/black"/>
+        <LinearLayout
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="116dp"
+                android:layout_height="106dp"
+                android:src="@drawable/farmer"
+                android:background="@android:color/transparent"/>
+            <LinearLayout
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11dp"
+                    android:text="Pig Farmers - Auto-click Every 10 Seconds"
+                    />
+                <LinearLayout
+                    android:layout_marginTop="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/farmertext"
+                        android:textColor="@color/black"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20dp"
+                        android:text="Farmers: 0"
+                        />
+                    <Button
+                        android:id="@+id/farmerbutton"
+                        android:layout_marginLeft="15dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Upgrade"
+                        android:onClick="Upgrade"
+                        android:backgroundTint="@android:color/holo_purple"
+                        />
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <View
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/black"/>
+        <LinearLayout
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="100dp"
+                android:src="@drawable/chestbonus"
+                android:background="@android:color/transparent"/>
+            <LinearLayout
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11dp"
+                    android:textAlignment="center"
+                    android:text="Daily Reward Bonus-\n Get Bonus Points On Every Daily Reward"
+                    />
+                <LinearLayout
+                    android:layout_marginTop="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/bonustext"
+                        android:textColor="@color/black"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20dp"
+                        android:text="Bonus: 0"
+                        />
+                    <Button
+                        android:id="@+id/bonusbutton"
+                        android:layout_marginLeft="15dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Upgrade"
+                        android:onClick="Upgrade"
+                        android:backgroundTint="@android:color/holo_blue_bright"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <View
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@android:color/black"/>
+        <LinearLayout
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="116dp"
+                android:layout_height="106dp"
+                android:src="@drawable/bank"
+                android:background="@android:color/transparent"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:text="Piggy Bank - \nStores given Value And Gives Back X2 Earned Interest after 5 minutes"
+                    android:textSize="11dp" />
+
+                <LinearLayout
+                    android:textAlignment="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/piggyedit"
+                        android:textColor="@color/black"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="50dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:hint="Enter Oinkers"
+                        android:textSize="20dp" />
+
+                    <TextView
+                        android:layout_marginTop="15dp"
+                        android:textAlignment="center"
+                        android:text="time left to earn interest: \n"
+                        android:textSize="17dp"
+                        android:id="@+id/piggytimer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        />
+
+                </LinearLayout>
+                <Button
+                    android:id="@+id/bankbutton"
+                    android:layout_width="200dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:backgroundTint="@android:color/holo_orange_dark"
+                    android:onClick="initBank"
+                    android:text="Put In \nPiggy bank"
+                    android:textAlignment="center"
+                    android:textSize="10dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
@@ -36,5 +272,4 @@
         app:layout_constraintHorizontal_bias="0.5"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_nav_menu"/>
-
 </RelativeLayout>

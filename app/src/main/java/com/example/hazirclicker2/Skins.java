@@ -128,7 +128,7 @@ public class Skins extends AppCompatActivity{
             popup_window cdd = new popup_window(Skins.this);
             priceSetter(db, cdd);
             cdd.show();
-            cdd.price.setText("This Item Costs " + cdd.cost + " Oinkers\nAre You Sure?");
+            cdd.price.setText("This Item Costs " + cdd.getCost() + " Oinkers\nAre You Sure?");
             cdd.setSkindex(viewIDName);
             cdd.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override

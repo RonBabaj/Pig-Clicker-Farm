@@ -79,7 +79,8 @@ public class DailyReward extends Fragment {
                 //a function to roll a random reward of oinkers, show the rolled reward on the textview of the fragment, and add the new value to the database
                 int c=0;
                 db=hlp.getWritableDatabase();
-                int rewardnumber= (int)(Math.random()*1000);
+                //multiplies the amount given in the daily reward with the times the bonus for the daily reward has been upgraded
+                int rewardnumber= (int)(Math.random()*1000)*(getTimesUpgraded(db,"Farmers")+1);
                 //textView.setText("Your Reward Is: "+rewardnumber+" Oinkers");
                 Toast.makeText(getContext(),"Your Reward Is: "+rewardnumber+" Oinkers",Toast.LENGTH_LONG).show();
                 c=getOinkCount(c);
@@ -92,6 +93,16 @@ public class DailyReward extends Fragment {
         });
         // Inflate the layout for this fragment
         return view;
+    }
+    public int getTimesUpgraded(SQLiteDatabase db,String UpgradeType){
+        String counter2 = "";
+        Cursor cursor = db.rawQuery("SELECT timesUpgraded FROM Upgrades WHERE upgrade= '"+UpgradeType+"'", (String[]) null);
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            counter2 = cursor.getString(0);
+        }
+        cursor.close();
+        return Integer.parseInt(counter2);
     }
     public int getOinkCount(int c){
         Cursor cursor2 = db.rawQuery("SELECT oinkers FROM oinkcounter", (String[]) null);

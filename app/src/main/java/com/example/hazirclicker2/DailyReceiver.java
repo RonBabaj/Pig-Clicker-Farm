@@ -9,22 +9,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-import androidx.fragment.app.FragmentContainerView;
+
+import com.example.hazirclicker2.MainActivity;
+import com.example.hazirclicker2.R;
+
+import java.sql.Struct;
 
 public class DailyReceiver extends BroadcastReceiver {
     private static final String CHANNEL_ID = "my_channel_01";
     private static final CharSequence CHANNEL_NAME = "My Channel";
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        initnotif(context,"We Already Missed You!","Come And Claim Your Daily Reward Today!");
+        Log.d("alarm Test", "alarm RAN");
+        showDailyNotification(context,"We Already Missed You!","Come And Claim Your Daily Reward Today!");
     }
 
-    public static void initnotif(Context context, String title, String message) {
-
+    private void showDailyNotification(Context context, String title, String message) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
