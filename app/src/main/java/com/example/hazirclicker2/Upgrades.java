@@ -34,6 +34,8 @@ public class Upgrades extends AppCompatActivity{
     TextView bonusText,farmerText,multiText,piggytext ;
     EditText piggyedit;
     String oinknum;
+    boolean isTimerRunning = false;
+    boolean isTimerFinished = false;
     int minutes,insertedvalue;
     @SuppressLint("MissingInflatedId")
     @Override
@@ -71,7 +73,7 @@ public class Upgrades extends AppCompatActivity{
                         startActivity(intent);
                         return true;
                     case R.id.wallpaper:
-                       intent = new Intent(Upgrades.this, Backgrounds.class);
+                        intent = new Intent(Upgrades.this, Backgrounds.class);
                         startActivity(intent);
                         return true;
                 }
@@ -82,23 +84,23 @@ public class Upgrades extends AppCompatActivity{
         hlp = new HelperDB(this);
         db=hlp.getWritableDatabase();
         if(rowsCount(db).equals("0")){
-           for(int i=0;i<chars.length;i++){
-               ContentValues cv = new ContentValues();
-               cv.put("upgrade",chars[i]);
-               switch (chars[i]){
-                   case "Multiplier":
-                       cv.put("price",100);
-                       break;
-                   case "Farmers":
-                       cv.put("price",200);
-                       break;
-                   case "Bonus":
-                       cv.put("price",300);
-                       break;
-               }
-               cv.put("timesUpgraded",0);
-               db.insert("Upgrades",null,cv);
-           }
+            for(int i=0;i<chars.length;i++){
+                ContentValues cv = new ContentValues();
+                cv.put("upgrade",chars[i]);
+                switch (chars[i]){
+                    case "Multiplier":
+                        cv.put("price",100);
+                        break;
+                    case "Farmers":
+                        cv.put("price",200);
+                        break;
+                    case "Bonus":
+                        cv.put("price",300);
+                        break;
+                }
+                cv.put("timesUpgraded",0);
+                db.insert("Upgrades",null,cv);
+            }
         }
         else{
             //updates the TextViews
@@ -113,17 +115,20 @@ public class Upgrades extends AppCompatActivity{
             piggytext.setVisibility(View.VISIBLE);
             findViewById(R.id.bankbutton).setVisibility(View.GONE);
             piggyedit.setVisibility(View.GONE);
+            isTimerRunning = false;
             countDownTimer = new CountDownTimer(timeleft*60000, 1000) {
-
                 public void onTick(long millisUntilFinished) {
                     minutes = (int) millisUntilFinished / 60000;
                     piggytext.setText("time left to earn interest: \n" + minutes + " minutes");
                     setTimeLeft(minutes);
                     setInsertedValue(insertedvalue);
+                    isTimerRunning = true;
 
                 }
 
                 public void onFinish() {
+                    isTimerRunning = false;
+                    isTimerFinished = true;
                     onEarnedInterest(insertedvalue);
                     piggytext.setVisibility(View.GONE);
                     findViewById(R.id.bankbutton).setVisibility(View.VISIBLE);
@@ -196,6 +201,11 @@ public class Upgrades extends AppCompatActivity{
     }
     //updates the Interest-gathering process of the piggy bank
     public void initBank(View view) {
+        //checks if a value has been truly entered
+        if(piggyedit.getText().toString()==null|| piggyedit.toString()==""){
+            Toast.makeText(this,"Invalid Character!",Toast.LENGTH_LONG).show();
+            return;
+        }
         //if table does have an empty set
         if(rowsCountBank(db).equals("0")) {
 
@@ -213,16 +223,22 @@ public class Upgrades extends AppCompatActivity{
                     piggytext.setVisibility(View.VISIBLE);
                     findViewById(R.id.bankbutton).setVisibility(View.GONE);
                     piggyedit.setVisibility(View.GONE);
+                    if(getTimesBought(db,"Stocks")>0)
+                        ActivateBoost(db,"Stocks");
+                    isTimerRunning = false;
                     countDownTimer = new CountDownTimer(300000, 1000) {
 
                         public void onTick(long millisUntilFinished) {
                             minutes = (int) millisUntilFinished / 60000;
                             setTimeLeft(minutes);
                             setInsertedValue(insertedvalue);
+                            isTimerRunning = true;
                             piggytext.setText("time left to earn interest: \n" + minutes + " minutes");
                         }
 
                         public void onFinish() {
+                            isTimerRunning = false;
+                            isTimerFinished = true;
                             onEarnedInterest(insertedvalue);
                             piggytext.setVisibility(View.GONE);
                             findViewById(R.id.bankbutton).setVisibility(View.VISIBLE);
@@ -243,6 +259,10 @@ public class Upgrades extends AppCompatActivity{
 
         }
 
+    }
+
+    private void ActivateBoost(SQLiteDatabase db, String boostType) {
+        db.execSQL("UPDATE Boosts SET isActivated = 'YES' WHERE boostType = '"+boostType+"'");
     }
 
     private int getInsertedValue() {
@@ -275,11 +295,53 @@ public class Upgrades extends AppCompatActivity{
 
     //triggers when the countdown timer has finished and notifies the user of the earned interest as well as updates it in the db
     private void onEarnedInterest(int enteredValue) {
-        int interest = enteredValue *2;
-        Toast.makeText(this, "Interest Earned Successfully!\nYou Gained Back "+interest+" Oinkers!",Toast.LENGTH_LONG).show();
-        int total = interest+getOinkers();
-        setOinkers(total);
+        if(rowsCountBank(db)!="0"){
+            int interest = 0;
+            if(isBoostActivated(db,"Stocks")){
+                interest = enteredValue *4;
+                setBoughtBoosts(db,getTimesBought(db,"Stocks")-1,"Stocks");
+            }
+            else
+                interest = enteredValue *2;
+            Toast.makeText(this, "Interest Earned Successfully!\nYou Gained Back "+interest+" Oinkers!",Toast.LENGTH_LONG).show();
+            int total = interest+getOinkers();
+            setOinkers(total);
+            db.execSQL("DELETE FROM PiggyBank");
 
+        }
+        Intent intent = new Intent(Upgrades.this,MainActivity.class);
+        startActivity(intent);
+
+    }
+    private void setBoughtBoosts(SQLiteDatabase db, int newTotal,String boostType) {
+
+        db.execSQL("UPDATE Boosts SET timesBought = '"+newTotal+"' WHERE boostType = '"+boostType+"'");
+    }
+    private int getTimesBought(SQLiteDatabase db,String boostType) {
+        String string = "";
+        Cursor cursor = db.rawQuery("SELECT timesBought FROM Boosts WHERE boostType = '"+boostType+"'",(String[]) null);
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            string = cursor.getString(0);
+        }
+        cursor.close();
+        if(string!="")
+            return Integer.parseInt(string);
+        else
+            return 0;
+    }
+    private boolean isBoostActivated(SQLiteDatabase db, String boostType) {
+        String counter2 = "";
+        Cursor cursor = db.rawQuery("SELECT isActivated FROM Boosts WHERE boostType= '"+boostType+"'", (String[]) null);
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            counter2 = cursor.getString(0);
+        }
+        cursor.close();
+        if(counter2.equals("YES"))
+            return true;
+        else
+            return false;
     }
 
     private void setOinkers(int total) {
@@ -296,7 +358,7 @@ public class Upgrades extends AppCompatActivity{
         }
         cursor.close();
         if(counter2!=null)
-        return Integer.parseInt(counter2);
+            return Integer.parseInt(counter2);
         else{
             return 0;
         }
@@ -346,9 +408,78 @@ public class Upgrades extends AppCompatActivity{
         return Integer.parseInt(counter2);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(countDownTimer != null){
+            try{
+                countDownTimer.cancel();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
     protected void onDestroy() {
         super.onDestroy();
         setTimeLeft(minutes);
         setInsertedValue(insertedvalue);
+        if(countDownTimer != null){
+            try{
+                countDownTimer.cancel();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(countDownTimer != null && isTimerRunning==false && isTimerFinished == false){
+            try{
+                countDownTimer = new CountDownTimer(timeLeft(),1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        minutes = (int) millisUntilFinished / 60000;
+                        setTimeLeft(minutes);
+                        setInsertedValue(insertedvalue);
+                        isTimerRunning = true;
+                        piggytext.setText("time left to earn interest: \n" + minutes + " minutes");
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        isTimerRunning = false;
+                        isTimerFinished = true;
+                        onEarnedInterest(insertedvalue);
+                        piggytext.setVisibility(View.GONE);
+                        findViewById(R.id.bankbutton).setVisibility(View.VISIBLE);
+                        piggyedit.setVisibility(View.VISIBLE);
+                        db.execSQL("DELETE FROM PiggyBank");
+                    }
+                };
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setTimeLeft(minutes);
+        setInsertedValue(insertedvalue);
+        if(countDownTimer != null){
+            try{
+                countDownTimer.cancel();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ package com.example.hazirclicker2;
         import android.database.Cursor;
         import android.database.sqlite.SQLiteDatabase;
         import android.os.Bundle;
+        import android.util.Log;
         import android.view.View;
         import android.view.Window;
         import android.widget.Button;
@@ -23,9 +24,11 @@ public class popup_window extends Dialog implements View.OnClickListener{
     public int leftoverCurrency;
     public String yesorno="";
     private String upgradeType="";
+    private String boostType="";
     private String cost = "";
     public TextView price;
     public String skindex="";
+
     HelperDB hlp;
     SQLiteDatabase db;
 
@@ -77,6 +80,34 @@ public class popup_window extends Dialog implements View.OnClickListener{
                     break;
             }
         }
+        if(price.getText().equals("This Boost Costs "+cost+ " Oinkers\nAre You Sure?")){
+            switch (view.getId()) {
+                case R.id.yes:
+                    yesorno="YES";
+                    OnConfirmedBoostsBuy(db);
+                    break;
+                case R.id.no:
+                    yesorno="NO";
+                    dismiss();
+                    break;
+                default:
+                    break;
+            }
+        }
+        if(price.getText().equals("Are You Sure You Want To Activate This Boost?")){
+            switch (view.getId()) {
+                case R.id.yes:
+                    yesorno="YES";
+                    OnConfirmedBoostsActivation(db);
+                    break;
+                case R.id.no:
+                    yesorno="NO";
+                    dismiss();
+                    break;
+                default:
+                    break;
+            }
+        }
         if(price.getText().equals("Item Owned, Would You like To Equip?")){
             switch (view.getId()) {
                 case R.id.yes:
@@ -89,6 +120,64 @@ public class popup_window extends Dialog implements View.OnClickListener{
                     break;
             }
         }
+    }
+
+    private void OnConfirmedBoostsActivation(SQLiteDatabase db) {
+        Log.d("HERE","I conforimed boost activation");
+        int newBoosttimes = ((getTimesBought(db,boostType))-1);
+        setBoughtBoosts(db,newBoosttimes,boostType);
+        db.execSQL("UPDATE Boosts SET isActivated = 'YES' WHERE  boostType = '"+boostType+"'");
+        Log.d("HERE","I conforimed boost activation");
+        Toast.makeText(getContext(),"Boost Activated! You Can view the remaining time in The Home Page",Toast.LENGTH_LONG).show();
+        dismiss();
+    }
+
+    private void OnConfirmedBoostsBuy(SQLiteDatabase db) {
+        String Price = cost;
+        int pricenum =Integer.parseInt(cost);
+        String oink = oinkersCount(db);
+        int oinknum = Integer.parseInt(oink);
+        leftoverCurrency = oinknum - pricenum;
+        if(leftoverCurrency < 0){
+            Toast toast = Toast.makeText(getContext(),"Insufficient Funds! Transaction not completed!",Toast.LENGTH_LONG);
+            toast.show();
+            dismiss();
+
+        }
+        else{
+
+            //increments the timesBought by one
+            setBoughtBoosts(db,getTimesBought(db,boostType)+1,boostType);
+            db.execSQL("UPDATE oinkcounter SET oinkers = " + leftoverCurrency);
+            Toast.makeText(getContext(),"Transaction Complete! Boost Added Successfully",Toast.LENGTH_LONG).show();
+            dismiss();
+        }
+
+
+
+    }
+
+//    private void setBoostPrice(SQLiteDatabase db, int i,String boostType) {
+//        db.execSQL("UPDATE Boosts Set price = '"+i+"' WHERE boostType = '"+boostType+"'");
+//    }
+
+    private void setBoughtBoosts(SQLiteDatabase db, int newTotal,String boostType) {
+
+        db.execSQL("UPDATE Boosts SET timesBought = '"+newTotal+"' WHERE boostType = '"+boostType+"'");
+    }
+
+    private int getTimesBought(SQLiteDatabase db,String boostType) {
+        String string = "";
+        Cursor cursor = db.rawQuery("SELECT timesBought FROM Boosts WHERE boostType = '"+boostType+"'",(String[]) null);
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            string = cursor.getString(0);
+        }
+        cursor.close();
+        if(string!="")
+            return Integer.parseInt(string);
+        else
+            return 0;
     }
 
 
@@ -178,5 +267,13 @@ public class popup_window extends Dialog implements View.OnClickListener{
         int cursorint= Integer.parseInt(counter2);
         int cursorint1= cursorint+1;
         return cursorint1;
+    }
+
+    public String getBoostType() {
+        return boostType;
+    }
+
+    public void setBoostType(String boostType) {
+        this.boostType = boostType;
     }
 }

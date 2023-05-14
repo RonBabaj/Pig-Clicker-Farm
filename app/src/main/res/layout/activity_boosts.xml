@@ -4,28 +4,225 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:background="@drawable/grayground"
     tools:context=".Boosts">
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_marginTop="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/hazir"
-        android:src="@drawable/hazir"
-        android:layout_marginTop="205dp"
-        android:layout_marginLeft="50dp"
-        android:onClick="oink"
-        android:background="@android:color/transparent"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0 Oinkers"
-        android:textSize="70dp"
-        android:textAlignment="center"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="450dp"
-        android:id="@+id/oink"
-        />
+                    <TextView
+                        android:layout_width="116dp"
+                        android:layout_height="106dp"
+                        android:text="X2"
+                        android:textSize="80dp"
+                        android:textColor="@color/black"
+                        />
+                    <LinearLayout
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="9dp"
+                            android:text="Double Points: Gives X2 Points On Every Click for 2 minutes"
+                            />
+
+
+                            <TextView
+                                android:layout_marginTop="10dp"
+                                android:id="@+id/X2Boosts"
+                                android:textAlignment="center"
+                                android:textColor="@color/black"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="20dp"
+                                android:text="Boosts Owned: 0"
+                                />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_height="wrap_content">
+
+
+                            <Button
+                                android:id="@+id/BuyX2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Buy"
+                                android:onClick="Buy"
+                                android:backgroundTint="@android:color/holo_green_dark"
+                                />
+                            <Button
+                                android:layout_marginLeft="15dp"
+                                android:id="@+id/ActivateX2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Activate"
+                                android:onClick="Activate"
+                                android:backgroundTint="@android:color/holo_red_light"
+                                />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+                <View
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/black"/>
+                <LinearLayout
+                    android:layout_marginTop="25dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="116dp"
+                        android:layout_height="106dp"
+                        android:src="@drawable/coffee"
+                        android:background="@android:color/transparent"/>
+                    <LinearLayout
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="wrap_content"
+                        android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="9dp"
+                            android:textAlignment="center"
+                            android:text="Buy Coffee-Make Farmers Work 𝙀𝙫𝙚𝙧𝙮 𝙎𝙚𝙘𝙤𝙣𝙙 for 5 minutes"
+                            />
+
+
+                        <TextView
+                            android:layout_marginTop="10dp"
+                            android:id="@+id/coffeeBoosts"
+                            android:textAlignment="center"
+                            android:textColor="@color/black"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="20dp"
+                            android:text="Boosts Owned: 0"
+                            />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_height="wrap_content">
+
+
+                            <Button
+                                android:id="@+id/BuyCoffee"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Buy"
+                                android:onClick="Buy"
+                                android:backgroundTint="@android:color/holo_green_dark"
+                                />
+                            <Button
+                                android:layout_marginLeft="15dp"
+                                android:id="@+id/ActivateCoffee"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Activate"
+                                android:onClick="Activate"
+                                android:backgroundTint="@android:color/holo_red_light"
+                                />
+                        </LinearLayout>
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            <View
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black"/>
+            <LinearLayout
+                android:layout_marginTop="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="116dp"
+                    android:layout_height="106dp"
+                    android:src="@drawable/stocks"
+                    android:background="@android:color/transparent"/>
+                <LinearLayout
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="wrap_content"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="9dp"
+                        android:text="Invest - Get Double Profit on Next Piggy Bank Deposit"
+                        />
+
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/StockBoosts"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20dp"
+                        android:text="Boosts Owned: 0"
+                        />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_height="wrap_content">
+
+
+                        <Button
+                            android:id="@+id/getInvest"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Get"
+                            android:onClick="Buy"
+                            android:backgroundTint="@android:color/holo_blue_dark"
+                            />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
@@ -36,5 +233,4 @@
         app:layout_constraintHorizontal_bias="0.5"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_nav_menu"/>
-
 </RelativeLayout>

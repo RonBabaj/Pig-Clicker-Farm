@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_gravity="center"
     android:gravity="center"
-    android:background="@drawable/closet"
+    android:background="@drawable/grayground"
     android:layout_height="match_parent"
     android:layout_centerHorizontal="true"
     android:layout_centerVertical="true"

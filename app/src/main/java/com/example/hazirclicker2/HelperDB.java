@@ -20,6 +20,7 @@ public class HelperDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("CREATE TABLE Upgrades (upgrade TEXT ,price INT, timesUpgraded INT);");
         sqLiteDatabase.execSQL("CREATE TABLE PiggyBank (oinkers INT,ticker INT);");
         sqLiteDatabase.execSQL("CREATE TABLE Handlers (handlerTimes INT);");
+        sqLiteDatabase.execSQL("CREATE TABLE Boosts (boostType TEXT, price INT, timesBought INT, isActivated TEXT,ticker INT);");
 
     }
 

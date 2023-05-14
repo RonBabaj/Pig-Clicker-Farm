@@ -236,6 +236,7 @@
                     <TextView
                         android:layout_marginTop="15dp"
                         android:textAlignment="center"
+                        android:textColor="@color/black"
                         android:text="time left to earn interest: \n"
                         android:textSize="17dp"
                         android:id="@+id/piggytimer"

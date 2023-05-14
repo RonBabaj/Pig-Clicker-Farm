@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentContainerView;
 
 import android.Manifest;
 import android.animation.AnimatorSet;
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -24,6 +25,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     private static final int ACCESSIBILITY_ENABLED = 1;
     String[] chars = {"Multiplier","Farmers","Bonus"};
+    String[] chars2 = {"X2","Coffee","Stocks"};
     String skindex;
     Handler handler;
     PendingIntent pendingIntent;
@@ -60,18 +63,20 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase db,db2;
     HelperDB hlp;
     Intent move;
-    FragmentContainerView frag;
+    FragmentContainerView frag,frag2;
 
     private static final String CHANNEL_ID = "my_channel_01";
     private static final CharSequence CHANNEL_NAME = "My Channel";
     TextView oink;
     String oinknum;
     ImageButton pig;
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         frag = findViewById(R.id.fragment_container_view);
+        frag2 = findViewById(R.id.countdown_container_view);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             if (bundle.getString("message in a bottle") != null) {
@@ -148,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 db.insert("Skins",null,cv2);
             }
 
-            //initiates upgrades page
+            //initiates upgrades page Table
             for(int i=0;i<chars.length;i++){
                 ContentValues cv3 = new ContentValues();
                 cv3.put("upgrade",chars[i]);
@@ -165,7 +170,26 @@ public class MainActivity extends AppCompatActivity {
                 }
                 cv3.put("timesUpgraded",0);
                 db.insert("Upgrades",null,cv3);
-
+            }
+            //initiates Boosts Table
+            for(int i=0;i<chars2.length;i++){
+                ContentValues cv4 = new ContentValues();
+                cv4.put("boostType",chars2[i]);
+                switch (chars2[i]){
+                    case "X2":
+                        cv4.put("price",500);
+                        break;
+                    case "Coffee":
+                        cv4.put("price",400);
+                        break;
+                    case "Stocks":
+                        cv4.put("price",200);
+                        break;
+                }
+                cv4.put("timesBought",0);
+                cv4.put("isActivated","NO");
+                cv4.put("ticker",0);
+                db.insert("Boosts",null,cv4);
             }
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.BIND_ACCESSIBILITY_SERVICE)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -178,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
             initdailyreward();
         }
         else {
-            Cursor cursor2 = this. db.rawQuery("SELECT oinkers FROM oinkcounter", (String[]) null);
+            Cursor cursor2 = this.db.rawQuery("SELECT oinkers FROM oinkcounter", (String[]) null);
             cursor2.moveToFirst();
             String smth = "";
             for (int i = 0; i < cursor2.getCount(); i++) {
@@ -187,17 +211,64 @@ public class MainActivity extends AppCompatActivity {
             cursor2.close();
             this.c = Integer.parseInt(smth);
             this.oink.setText("" + this.c + " Oinkers");
+            if(isBoostActivated(db,chars2[1]) || isBoostActivated(db,chars2[0])){
+                frag2.setVisibility(View.VISIBLE);
+            }
         }
         //checks if handler has already been initialized
         if(rowsCountHandlers(db)==0){
                 //initiates daily reward and farmers events in the case where the handler has stopped
                 Log.d("daily reward","daily reward initiated successfully");
                 //starts the recursive auto-clicking process
+            if(isBoostActivated(db,chars2[1])){
+                //checks if the boost is bought
+               initFarmersBoosted();
+            }
+            else {
                 initFarmers();
-                Log.d("farmers","farmers initiated successfully");
-                setHandlers(db,1);
+                Log.d("farmers", "farmers initiated successfully");
+                setHandlers(db, 1);
+            }
         }
         this. db.close();
+    }
+
+    private void initFarmersBoosted() {
+        handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                HelperDB hlp = new HelperDB(getApplicationContext());
+                SQLiteDatabase db = hlp.getWritableDatabase();
+                int timesUpgraded = getTimesUpgraded(db,"Farmers");
+                for(int i=0;i<timesUpgraded;i++){
+                    pig.performClick();
+                    try{
+                        oink.setText(getOinkerCount(db));
+                        Log.d("farmers2","clicked!");
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                if(isBoostActivated(db,chars2[1])){
+                    initFarmersBoosted();}
+                else{
+                    frag2.setVisibility(View.INVISIBLE);
+                    initFarmers();}
+            }
+        }, 1000);
+
+    }
+
+    public int getTicker(SQLiteDatabase db,String boostType){
+        String counter2 = "";
+        Cursor cursor = db.rawQuery("SELECT ticker FROM Boosts WHERE boostType = '"+boostType+"'", (String[]) null);
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            counter2 = cursor.getString(0);
+        }
+        cursor.close();
+        return Integer.parseInt(counter2);
     }
 
     private void setHandlers(SQLiteDatabase db, int i) {
@@ -374,11 +445,27 @@ public class MainActivity extends AppCompatActivity {
                 smth = cursor2.getString(0);
             }
             cursor2.close();
-            this.c = Integer.parseInt(smth) + (getTimesUpgraded(db,"Multiplier")+1);
+            if(isBoostActivated(db,chars2[0])){this.c = Integer.parseInt(smth) + (getTimesUpgraded(db,"Multiplier")+1)*2;}
+            else
+            {frag2.setVisibility(View.INVISIBLE);this.c = Integer.parseInt(smth) + (getTimesUpgraded(db,"Multiplier")+1);}
             this.oink.setText("" + this.c + " Oinkers");
             this. db.execSQL("UPDATE oinkcounter SET oinkers = " + this.c);
         }
         this. db.close();
+    }
+
+    private boolean isBoostActivated(SQLiteDatabase db, String boostType) {
+        String counter2 = "";
+        Cursor cursor = db.rawQuery("SELECT isActivated FROM Boosts WHERE boostType= '"+boostType+"'", (String[]) null);
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            counter2 = cursor.getString(0);
+        }
+        cursor.close();
+        if(counter2.equals("YES"))
+            return true;
+        else
+            return false;
     }
 
     public int getTimesUpgraded(SQLiteDatabase db,String UpgradeType){
@@ -487,7 +574,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        handler.removeCallbacksAndMessages(null);
+       if(handler!=null)
+           handler.removeCallbacksAndMessages(null);
         HelperDB hlp = new HelperDB(getApplicationContext());
         SQLiteDatabase db1 = hlp.getWritableDatabase();
         db1.execSQL("DELETE FROM Handlers");
